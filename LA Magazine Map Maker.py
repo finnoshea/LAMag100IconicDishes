@@ -10,6 +10,12 @@ import json  # to allow loading the API
 __author__ = 'finn'
 __project__ = 'Map the location of the LA Magazine Los Angeles Restaurants'
 
+"""
+This file takes a dictionary of the restaurants of LA Magazine's 100 most iconic dishes in Los Angeles and uses Google
+Maps to make a static image with red pins for restaurants with dishes that haven't been tried and green flags for those
+restaurants in which all the dished have been tried.
+"""
+
 
 class MapMaker:
     def __init__(self):
@@ -24,7 +30,7 @@ class MapMaker:
         self.home = {u'lat': 34.0459854, u'lng': -118.4575366}
         self.full_url = "https://maps.googleapis.com/maps/api/staticmap?"  # the beginning of the static map URL
 
-        with open("credentials.json", "r") as keyfile:
+        with open("../credentials.json", "r") as keyfile:
             temp_key = json.load(keyfile)
         self.gmaps = googlemaps.Client(key=temp_key["gmap_key"])  # API access to google maps
 
