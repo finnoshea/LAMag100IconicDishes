@@ -112,23 +112,36 @@ class MapMaker:
         self.full_url += base_url
 
         for key in self.locations:
-            for j in range(len(self.locations[key]["locations"])):
-                had_it = True  # default state of had_it is true, so when multiplied by false it becomes false
-                tmp_dict = defaultdict(dict)
-                tmp_dict["number"] = self.locations[key]["number"]
-                tmp_dict["lat"] = self.locations[key]["locations"][j]["lat"]
-                tmp_dict["lng"] = self.locations[key]["locations"][j]["lng"]
-                for item in self.locations[key]["items"].keys():
-                    had_it *= self.locations[key]["items"][item]["Had?"]
-                #print key + ": " + str(bool(had_it))
-                if not had_it:  # if you have not had all the items, use a red marker
-                    tmp_mark = "&markers=color:red|label:+|{lat},{lng}".format(**tmp_dict)
-                else:  # if you have had all the items, use a green marker
-                    tmp_mark = "&markers=color:green|label:|{lat},{lng}".format(**tmp_dict)
-                self.full_url += tmp_mark
+            self.full_url += self.single_rest_marker_string(key)
 
         sesh = requests.Session()
         r = sesh.get(self.full_url)
-        f = open('the_image.png', 'wb')
-        f.write(r.content)
-        f.close()
+        with open('the_image.png', 'wb') as f:
+            f.write(r.content)
+            f.close()
+
+    def single_rest_marker_string(self, key):
+        """
+        The function puts together the marker url for a single restaurant
+        :param key: the name of a restaurant key in the dictionary
+        :return:
+        """
+
+        url_holder = ''
+
+        for j in range(len(self.locations[key]["locations"])):
+            had_it = True  # default state of had_it is true, so when multiplied by false it becomes false
+            tmp_dict = defaultdict(dict)
+            tmp_dict["number"] = self.locations[key]["number"]
+            tmp_dict["lat"] = self.locations[key]["locations"][j]["lat"]
+            tmp_dict["lng"] = self.locations[key]["locations"][j]["lng"]
+            for item in self.locations[key]["items"].keys():
+                had_it *= self.locations[key]["items"][item]["Had?"]
+            # print key + ": " + str(bool(had_it))
+            if not had_it:  # if you have not had all the items, use a red marker
+                tmp_mark = "&markers=color:red|label:+|{lat},{lng}".format(**tmp_dict)
+            else:  # if you have had all the items, use a green marker
+                tmp_mark = "&markers=color:green|label:|{lat},{lng}".format(**tmp_dict)
+            url_holder += tmp_mark
+
+        return url_holder
