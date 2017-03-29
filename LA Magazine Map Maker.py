@@ -120,11 +120,15 @@ class MapMaker:
             f.write(r.content)
             f.close()
 
+        with open('the_url.txt', 'wb') as d:
+            d.write(self.full_url)
+            d.close()
+
     def single_rest_marker_string(self, key):
         """
         The function puts together the marker url for a single restaurant
         :param key: the name of a restaurant key in the dictionary
-        :return:
+        :return: the marker syntax for a static google map
         """
 
         url_holder = ''
@@ -139,7 +143,7 @@ class MapMaker:
                 had_it *= self.locations[key]["items"][item]["Had?"]
             # print key + ": " + str(bool(had_it))
             if not had_it:  # if you have not had all the items, use a red marker
-                tmp_mark = "&markers=color:red|label:+|{lat},{lng}".format(**tmp_dict)
+                tmp_mark = "&markers=color:red|label:|{lat},{lng}".format(**tmp_dict)
             else:  # if you have had all the items, use a green marker
                 tmp_mark = "&markers=color:green|label:|{lat},{lng}".format(**tmp_dict)
             url_holder += tmp_mark
